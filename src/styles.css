@@ -1,4 +1,8 @@
 .menu:hover{
     -fx-background-color: rgba(213, 218, 226, 0.1);
 }
+.navmenu:hover{
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
 
