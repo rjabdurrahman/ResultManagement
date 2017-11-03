@@ -3,6 +3,7 @@ package resultmanagement;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import de.jensd.fx.glyphs.octicons.OctIconView;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 
 public class FXMLDocumentController implements Initializable {
     //Database
@@ -37,10 +39,11 @@ public class FXMLDocumentController implements Initializable {
     private JFXButton btn_addst;
     @FXML
     private JFXTextField addst_roll,addst_name;
-    //-------------
-    
     @FXML
-    private JFXButton addbtn;
+    private Label addst_warning;
+    @FXML
+    private FontAwesomeIconView addst_warning_check,addst_warning_close;
+    //-------------
     
     @FXML
     private JFXButton class6;
@@ -73,10 +76,16 @@ public class FXMLDocumentController implements Initializable {
    @FXML
     void act2(MouseEvent event) {
         if(event.getSource() == addst_name){
+            addst_warning.setVisible(false);
+            addst_warning_check.setVisible(false);
+            addst_warning_close.setVisible(false);
             namelab.setVisible(true);
             namelab.setLayoutX(182.0);
         }
         if(event.getSource() == addst_roll){
+            addst_warning.setVisible(false);
+            addst_warning_check.setVisible(false);
+            addst_warning_close.setVisible(false);
             rolllab.setVisible(true);
             rolllab.setLayoutX(182.0);
         }
@@ -86,7 +95,7 @@ public class FXMLDocumentController implements Initializable {
     //Kiboard Action for Input Field
     @FXML
     void act(ActionEvent event) {
-        if((event.getSource() == addst_name) || (event.getSource() == addbtn)){
+        if((event.getSource() == addst_name) || (event.getSource() == btn_addst)){
             addst_roll.requestFocus();
             addst_roll.setText("");
             addst_name.setText("");
@@ -105,17 +114,34 @@ public class FXMLDocumentController implements Initializable {
                 ps.setInt(1, Integer.parseInt(addst_roll.getText()));
                 ps.setString(2, addst_name.getText());
                 int i = ps.executeUpdate();
-                if(i>0)
-                    System.out.println("Updated Data!");
-                else
-                    System.out.println("Error to add!");
+                if(i>0){
+                    addst_warning_close.setVisible(false);
+                    addst_warning_check.setVisible(true);
+                    addst_warning.setTextFill(Color.BLUE);
+                    addst_warning.setText("Student Successfully Added");
+                    addst_warning.setVisible(true);
+                }
+                else{
+                    addst_warning_check.setVisible(false);
+                    addst_warning_close.setVisible(true);
+                    addst_warning.setTextFill(Color.RED);
+                    addst_warning.setText("Student Can't Be Added");
+                    addst_warning.setVisible(true);
+                }
             } catch(SQLException e) {
-                System.out.println("Error to add!");
+                addst_warning_check.setVisible(false);
+                addst_warning_close.setVisible(true);
+                addst_warning.setTextFill(Color.RED);
+                addst_warning.setText("Student Can't Be Added");
+                addst_warning.setVisible(true);
             } finally {
                 try {
                     ps.close();
                 } catch (Exception e) {
-                    System.out.println("Error in closimg database!");
+                    addst_warning_check.setVisible(false);
+                    addst_warning_close.setVisible(true);
+                    addst_warning.setText("Error for closing Database!");
+                    addst_warning.setVisible(true);
                 }
             }
         }
