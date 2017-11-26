@@ -190,6 +190,7 @@ public class FXMLDocumentController implements Initializable {
             System.out.println("Not Connected!");
         //Update Student list
         getStudentList();
+        //Student List End
     }    
     
 }
