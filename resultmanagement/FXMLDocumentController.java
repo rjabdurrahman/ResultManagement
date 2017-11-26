@@ -7,12 +7,21 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import de.jensd.fx.glyphs.octicons.OctIconView;
 import java.net.URL;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Observable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -43,6 +52,12 @@ public class FXMLDocumentController implements Initializable {
     private Label addst_warning;
     @FXML
     private FontAwesomeIconView addst_warning_check,addst_warning_close;
+    @FXML
+    private TableView<Student> stlist;
+    @FXML
+    private TableColumn<Student, Integer> stlist_roll;
+    @FXML
+    private TableColumn<Student, String> stlist_name;
     //-------------
     
     @FXML
@@ -146,13 +161,35 @@ public class FXMLDocumentController implements Initializable {
             }
         }
     }
-    
+    //Student List
+    public ObservableList<Student> studentlist = FXCollections.observableArrayList();
+    public void getStudentList(){
+        ResultSet rs = null;
+        try {
+            rs = db.Connector().createStatement().executeQuery("SELECT * FROM students");
+        } catch (SQLException ex) {
+            //ex here
+        }
+        try {
+            while (rs.next()) {
+                studentlist.add(new Student(Integer.parseInt(rs.getString(1)), rs.getString(2)));
+            }
+        } catch (SQLException ex) {
+            //ex here
+        }
+        stlist_roll.setCellValueFactory(new PropertyValueFactory<>("roll"));
+        stlist_name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        stlist.setItems(studentlist);
+    }
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //Establish Database connection
         if(db.isDbConnected())
             System.out.println("Connected!");
         else
             System.out.println("Not Connected!");
+        //Update Student list
+        getStudentList();
     }    
     
 }
